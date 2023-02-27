@@ -1,7 +1,11 @@
 package dk.preuss.utils;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+/**
+ * The StringJoiner
+ */
 public class StringJoiner {
 	private final java.util.StringJoiner localJoiner;
 
@@ -78,7 +82,7 @@ public class StringJoiner {
 	 * {@code null}, then {@code "null"} is added.
 	 *
 	 * @param newElement The element to add
-	 * @return a reference to this {@code StringJoiner}
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
 	public StringJoiner add(CharSequence newElement) {
 		localJoiner.add(newElement);
@@ -101,7 +105,7 @@ public class StringJoiner {
 	 *
 	 * @param other The {@code StringJoiner} whose contents should be merged
 	 *              into this one
-	 * @return This {@code StringJoiner}
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 * @throws NullPointerException if the other {@code StringJoiner} is null
 	 */
 	public StringJoiner merge(StringJoiner other) {
@@ -136,8 +140,16 @@ public class StringJoiner {
 		return localJoiner.toString();
 	}
 
-	public <T> StringJoiner addIfTrue(CharSequence prefix, T newElement, Function<T, Boolean> testIfTrue) {
-		if (testIfTrue.apply(newElement)) {
+	/**
+	 * Only add newElement, if predicate testIfTrue is true.
+	 * @param prefix     the sequence of characters to be used at the beginning
+	 * @param newElement to be testet and added if legal, added as a String.valueOf
+	 * @param testIfTrue Predicate to test if newElement is to be added.
+	 * @return this {@code StringJoiner} itself so the calls may be chained
+	 * @param <T> The type of newElement, to be used in testIfTrue
+	 */
+	public <T> StringJoiner addIfTrue(CharSequence prefix, T newElement, Predicate<T> testIfTrue) {
+		if (testIfTrue.test(newElement)) {
 			return addConcatenated(prefix, String.valueOf(newElement));
 		} else {
 			return this;
@@ -145,23 +157,26 @@ public class StringJoiner {
 	}
 
 	/**
-	 * @param prefix
-	 * @param newElement
-	 * @param newOtherElement
-	 * @param testIfNewElement
-	 * @param <T>
-	 * @return
+	 * Only add newElement, if predicate testIfTrue is true else it will
+	 * add newOtherElement.
+	 * @param prefix           the sequence of characters to be used at the beginning
+	 * @param newElement to be testet and added if legal, added as a String.valueOf
+	 * @param newOtherElement to be added if newElement is not added.
+	 * @param testIfTrue Predicate to test if newElement is to be added.
+	 * @param <T> The type of newElement, to be used in testIfTrue
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
 	public <T> StringJoiner addTrueElseOther(CharSequence prefix, T newElement, CharSequence newOtherElement,
-											 Function<T, Boolean> testIfNewElement) {
-		return testIfNewElement.apply(newElement) ?
+											 Predicate<T> testIfTrue) {
+		return testIfTrue.test(newElement) ?
 				addConcatenated(prefix, String.valueOf(newElement)) :
 				addConcatenated(prefix, newOtherElement);
 	}
 
 	/**
-	 * @param newElements
-	 * @return
+	 * Adds multiple elements.
+	 * @param newElements  The elements to add
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
 	public StringJoiner addConcatenated(CharSequence... newElements) {
 		StringBuilder element = new StringBuilder();
@@ -172,40 +187,50 @@ public class StringJoiner {
 	}
 
 	/**
-	 * @param prefix
-	 * @param element
-	 * @return
+	 * Only adds newElement if newElement is not empty.
+	 * Where not empty, means not null or string value is
+	 * not zero.
+	 * @param prefix  the sequence of characters to be used at the beginning
+	 * @param newElement  The element to add
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
-	public StringJoiner addIfNotEmpty(String prefix, Object element) {
-		if (null != element) {
-			return addIfNotEmpty(prefix, String.valueOf(element));
+	public StringJoiner addIfNotEmpty(String prefix, Object newElement) {
+		if (null != newElement) {
+			return addIfNotEmpty(prefix, String.valueOf(newElement));
 		}
 		return this;
 	}
 
 	/**
-	 * @param prefix
-	 * @param element
-	 * @return
+	 * Adds if not empty, meaning element can not be
+	 * null or empty.
+	 *
+	 * @param prefix  the sequence of characters to be used at the beginning
+	 * @param newElement  The element to add
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
-	public StringJoiner addIfNotEmpty(String prefix, CharSequence element) {
-		if (null != element && element.length() > 0) {
-			return addConcatenated(prefix, element);
+	public StringJoiner addIfNotEmpty(String prefix, CharSequence newElement) {
+		if (null != newElement && newElement.length() > 0) {
+			return addConcatenated(prefix, newElement);
 		}
 		return this;
 	}
 
 	/**
-	 * @param prefix
-	 * @param element
-	 * @return
+	 * Adds if not blank for element.
+	 * Meanning element can not be null, empty
+	 * or whitespace.
+	 *
+	 * @param prefix  the sequence of characters to be used at the beginning
+	 * @param newElement  The element to add
+	 * @return this {@code StringJoiner} itself so the calls may be chained
 	 */
-	public StringJoiner addIfNotBlank(String prefix, CharSequence element) {
+	public StringJoiner addIfNotBlank(String prefix, CharSequence newElement) {
 		int strLen;
-		if (null != element && (strLen = element.length()) > 0) {
+		if (null != newElement && (strLen = newElement.length()) > 0) {
 			for (int i = 0; i < strLen; i++) {
-				if ((!Character.isWhitespace(element.charAt(i)))) {
-					return add(element);
+				if ((!Character.isWhitespace(newElement.charAt(i)))) {
+					return add(newElement);
 				}
 			}
 		}
