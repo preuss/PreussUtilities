@@ -6,6 +6,15 @@ public class StringJoiner {
 	private final java.util.StringJoiner localJoiner;
 
 	/**
+	 * Constructs {@code StringJoiner} with no characters in it, with no
+	 * {@code prefix} or {@code suffix}, and "," as the supplied
+	 * {@code delimiter}.
+	 */
+	public StringJoiner() {
+		this(",");
+	}
+
+	/**
 	 * Constructs a {@code StringJoiner} with no characters in it, with no
 	 * {@code prefix} or {@code suffix}, and a copy of the supplied
 	 * {@code delimiter}.
@@ -135,6 +144,14 @@ public class StringJoiner {
 		}
 	}
 
+	/**
+	 * @param prefix
+	 * @param newElement
+	 * @param newOtherElement
+	 * @param testIfNewElement
+	 * @param <T>
+	 * @return
+	 */
 	public <T> StringJoiner addTrueElseOther(CharSequence prefix, T newElement, CharSequence newOtherElement,
 											 Function<T, Boolean> testIfNewElement) {
 		return testIfNewElement.apply(newElement) ?
@@ -142,6 +159,10 @@ public class StringJoiner {
 				addConcatenated(prefix, newOtherElement);
 	}
 
+	/**
+	 * @param newElements
+	 * @return
+	 */
 	public StringJoiner addConcatenated(CharSequence... newElements) {
 		StringBuilder element = new StringBuilder();
 		for (var newElement : newElements) {
@@ -150,6 +171,11 @@ public class StringJoiner {
 		return add(element.toString());
 	}
 
+	/**
+	 * @param prefix
+	 * @param element
+	 * @return
+	 */
 	public StringJoiner addIfNotEmpty(String prefix, Object element) {
 		if (null != element) {
 			return addIfNotEmpty(prefix, String.valueOf(element));
@@ -157,6 +183,11 @@ public class StringJoiner {
 		return this;
 	}
 
+	/**
+	 * @param prefix
+	 * @param element
+	 * @return
+	 */
 	public StringJoiner addIfNotEmpty(String prefix, CharSequence element) {
 		if (null != element && element.length() > 0) {
 			return addConcatenated(prefix, element);
@@ -164,6 +195,11 @@ public class StringJoiner {
 		return this;
 	}
 
+	/**
+	 * @param prefix
+	 * @param element
+	 * @return
+	 */
 	public StringJoiner addIfNotBlank(String prefix, CharSequence element) {
 		int strLen;
 		if (null != element && (strLen = element.length()) > 0) {

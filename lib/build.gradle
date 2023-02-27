@@ -13,9 +13,11 @@ plugins {
 
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id 'maven-publish'
 }
 
 repositories {
+    mavenLocal()
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
@@ -28,12 +30,34 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(19)
+    }
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'dk.preussworld'
+            artifactId = 'preuss-utilities'
+            version = "0.0.1"
+            from components.java
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
 testing {
     suites {
         // Configure the built-in test suite
         test {
             // Use Spock test framework
-            useSpock('2.2-groovy-3.0')
+            useSpock('2.3-groovy-4.0')
         }
     }
 }

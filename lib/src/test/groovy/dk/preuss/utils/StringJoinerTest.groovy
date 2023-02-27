@@ -5,15 +5,15 @@ package dk.preuss.utils
 
 import spock.lang.Specification
 
-class LibraryTest extends Specification {
+class StringJoinerTest extends Specification {
     def "someLibraryMethod returns true"() {
         setup:
-        def lib = new Library()
+        def stringJoiner = new StringJoiner()
 
         when:
-        def result = lib.someLibraryMethod()
+        def result = stringJoiner.length()
 
         then:
-        result == true
+        result == 0
     }
 }
