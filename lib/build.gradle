@@ -41,8 +41,8 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId = 'dk.preussworld'
-            artifactId = 'preuss-utilities'
+            groupId = 'dk.preuss.utils'
+            artifactId = 'utils'
             version = "0.0.1"
             from components.java
         }
